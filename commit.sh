@@ -15,10 +15,13 @@ generate_compile_script()
         exit
     fi
     echo "
-        #!/bin/bash
-        cd build
-        make clean
-        make -j $(nproc || sysctl -n hw.ncpu || echo 2)
+#!/bin/bash
+if [ ! -d "$dir" ];then
+    cmake -B build .
+fi
+cd build
+make clean
+make -j $(nproc || sysctl -n hw.ncpu || echo 2)
     " > run.sh
     chmod +x run.sh
     echo -e "Compile shell script generated at: $PWD/run.sh\n"

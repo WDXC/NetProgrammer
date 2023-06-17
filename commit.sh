@@ -2,6 +2,7 @@
 
 dir="./build"
 file="./run.sh"
+cache="./.cache"
 
 echo -e "1. Generate compile script\n"
 echo -e "2. Commit your local commit\n"
@@ -32,6 +33,9 @@ commit_local_code()
     fi
     if [ -d "$dir" ];then
         rm -rf $dir
+    fi
+    if [ -d "$cache" ];then
+        rm -rf $cache
     fi
 
     git add .

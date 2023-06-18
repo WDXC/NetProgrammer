@@ -23,7 +23,7 @@ void Client::init() {
   // close
   int client_fd = 0;
   int ret = 0;
-  ret = socket(client_fd, SOCK_STREAM, AF_INET);
+  client_fd = socket(PF_INET, SOCK_STREAM, 0);
   char IpInfo[MAX_IP_SIZE + 1];
   char message[MAX_BUFFER+1];
   if (ret < 0) {

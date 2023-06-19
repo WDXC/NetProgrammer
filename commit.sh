@@ -6,7 +6,7 @@ cache="./.cache"
 
 echo -e "1. Generate compile script\n"
 echo -e "2. Commit your local commit\n"
-echo -e "3. Quit(q)\n"
+echo -e "q. Quit(q)\n"
 
 generate_compile_script()
 {

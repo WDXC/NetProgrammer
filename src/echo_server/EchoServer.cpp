@@ -1,5 +1,4 @@
 #include "EchoServer.h"
-#include "base_log.h"
 #include <arpa/inet.h>
 #include <err.h>
 #include <fcntl.h>
@@ -10,10 +9,6 @@
 #include <unistd.h>
 
 int EchoServer::SERVER_PORT = 5555;
-
-struct EchoServer::client {
-  struct event ev_read;
-};
 
 EchoServer::EchoServer() {}
 
@@ -33,95 +28,84 @@ int EchoServer::setnonblock(int fd) {
   return 0;
 }
 
-void EchoServer::on_read(int fd, short ev, void *arg) {
-  struct client *client = (struct client *)arg;
-  u_char buf[8196];
-  int len, wlen;
+void EchoServer::on_read_cb(struct bufferevent *bev, void *ctx) {
+  struct evbuffer *input = bufferevent_get_input(bev);
+  struct evbuffer *output = bufferevent_get_output(bev);
 
-  len = read(fd, buf, sizeof(buf));
-  if (len == 0) {
-    LOG(INFO) << "client disconnected";
-    close(fd);
-    event_del(&client->ev_read);
-    free(client);
-    return;
-  } else if (len < 0) {
-    LOG(INFO) << "Socket failure, disconnected client: %s" << strerror(errno);
-    close(fd);
-    event_del(&client->ev_read);
-    free(client);
-    return;
+  // 从输入缓冲区读取数据
+  size_t len = evbuffer_get_length(input);
+  char *data = (char*)malloc(len);
+  evbuffer_copyout(input, data, len);
+
+  // 将数据写入输出缓冲区
+  evbuffer_add_buffer(output, input);
+
+  // 释放内存
+  free(data);
+}
+
+void EchoServer::echo_event_cb(struct bufferevent *bev, short events,
+                               void *ctx) {
+  if (events & BEV_EVENT_ERROR) {
+    perror("Error");
   }
-
-  wlen = write(fd, buf, len);
-  if (wlen < len) {
-    LOG(INFO) << "Short write, not all data echoed back to client.";
+  if (events & (BEV_EVENT_EOF | BEV_EVENT_ERROR)) {
+    bufferevent_free(bev);
   }
 }
 
-void EchoServer::on_accpet(int fd, short ev, void *arg) {
-  int client_fd;
-  struct sockaddr_in client_addr;
-  socklen_t client_len = sizeof(client_addr);
-  struct client *client;
+void EchoServer::on_accpet_cb(struct evconnlistener *listener,
+                              evutil_socket_t fd, struct sockaddr *address,
+                              int socklen, void *ctx) {
+  struct event_base *base = evconnlistener_get_base(listener);
+  struct bufferevent *bev =
+      bufferevent_socket_new(base, fd, BEV_OPT_CLOSE_ON_FREE);
 
-  /* Accept the new connection */
-  client_fd = accept(fd, (struct sockaddr *)&client_addr, &client_len);
-  if (client_fd == -1) {
-    warn("accept failed");
-    return;
-  }
+  // 设置读回调函数和事件回调函数
+  bufferevent_setcb(bev, on_read_cb, NULL, echo_event_cb, NULL);
 
-  if (EchoServer::setnonblock(client_fd) < 0) {
-    warn("failed to set client socket non-blocking");
-  }
+  // 开始监听读事件
+  bufferevent_enable(bev, EV_READ | EV_WRITE);
+}
 
-  client = (struct client *)calloc(1, sizeof(*client));
+void EchoServer::accept_error_cb(struct evconnlistener *listener, void *ctx) {
+        struct event_base *base = evconnlistener_get_base(listener);
+    int err = EVUTIL_SOCKET_ERROR();
+    fprintf(stderr, "Error %d: %s\n", err, evutil_socket_error_to_string(err));
 
-  if (client == NULL) {
-    err(1, "malloc failed");
-  }
-
-  event_set(&client->ev_read, client_fd, EV_READ | EV_PERSIST, on_read, client);
-
-  event_add(&client->ev_read, NULL);
-
-  LOG(INFO) << "Accept connection from %s " << inet_ntoa(client_addr.sin_addr);
+    event_base_loopexit(base, NULL);
 }
 
 void EchoServer::init() {
-  int listen_fd;
-  struct sockaddr_in listen_addr;
-  int reuseaddr_on = 1;
-
-  struct event ev_accept;
-  event_init();
-
-  listen_fd = socket(AF_INET, SOCK_STREAM, 0);
-  if (listen_fd < 0)
-    err(1, "listen failed");
-  if (setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &reuseaddr_on,
-                 sizeof(reuseaddr_on)) == -1)
-    err(1, "setsockopt failed");
-  memset(&listen_addr, 0, sizeof(listen_addr));
-  listen_addr.sin_family = AF_INET;
-  listen_addr.sin_addr.s_addr = INADDR_ANY;
-  listen_addr.sin_port = htons(SERVER_PORT);
-  if (bind(listen_fd, (struct sockaddr *)&listen_addr, sizeof(listen_addr)) < 0)
-    err(1, "bind failed");
-  if (listen(listen_fd, 5) < 0)
-    err(1, "listen failed");
-
-  /* Set the socket to non-blocking, this is essential in event
-   * based programming with libevent. */
-  if (setnonblock(listen_fd) < 0)
-    err(1, "failed to set server socket to non-blocking");
-
-  /* We now have a listening socket, we create a read event to
-   * be notified when a client connects. */
-  event_set(&ev_accept, listen_fd, EV_READ | EV_PERSIST, EchoServer::on_accpet, NULL);
-  event_add(&ev_accept, NULL);
-
-  /* Start the libevent event loop. */
-  event_dispatch();
+    struct event_base *base;
+    struct evconnlistener *listener;
+    struct sockaddr_in sin;
+    
+    int port = 8888;
+    
+    base = event_base_new();
+    if (!base) {
+        fprintf(stderr, "Could not initialize event base.\n");
+        return;
+    }
+    
+    memset(&sin, 0, sizeof(sin));
+    sin.sin_family = AF_INET;
+    sin.sin_addr.s_addr = htonl(INADDR_ANY);
+    sin.sin_port = htons(port);
+    
+    listener = evconnlistener_new_bind(base, on_accpet_cb, NULL,
+                                       LEV_OPT_CLOSE_ON_FREE | LEV_OPT_REUSEABLE,
+                                       -1, (struct sockaddr*)&sin, sizeof(sin));
+    if (!listener) {
+        fprintf(stderr, "Could not create listener.\n");
+        return;
+    }
+    
+    evconnlistener_set_error_cb(listener, accept_error_cb);
+    
+    event_base_dispatch(base);
+    
+    evconnlistener_free(listener);
+    event_base_free(base);
 }

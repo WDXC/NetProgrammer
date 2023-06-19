@@ -31,14 +31,14 @@ include_directories(
 # generate executable files
 # echo_server
 add_library(${ECHO} SHARED ${source_list_echo_server})
-
 add_executable(${ECHO}_main ${CMAKE_CURRENT_SOURCE_DIR}/example/echo_server_main.cpp)
-target_link_libraries(${ECHO}_main PRIVATE ${ECHO} -levent -lpthread -lLog_base)
+target_link_libraries(${ECHO}_main PRIVATE ${ECHO} -levent -lpthread 
+    -levent_core)
 
 # test_client
 add_library(${CLIENT} ${source_list_test_client})
 add_executable(${CLIENT}_main ${source_list}
     ${CMAKE_CURRENT_SOURCE_DIR}/example/test_client_main.cpp)
-target_link_libraries(${CLIENT}_main PRIVATE ${CLIENT} -levent -lpthread -lLog_base)
+target_link_libraries(${CLIENT}_main PRIVATE ${CLIENT} -levent -lpthread  -levent_core)
 
 

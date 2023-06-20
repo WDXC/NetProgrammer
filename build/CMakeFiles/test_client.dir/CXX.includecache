@@ -1,0 +1,34 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../include/test_client/test_client.h
+event2/buffer.h
+-
+event2/bufferevent.h
+-
+event2/event.h
+-
+
+/root/mine/project/NetProgrammer/src/test_client/test_client.cpp
+test_client.h
+/root/mine/project/NetProgrammer/src/test_client/test_client.h
+arpa/inet.h
+-
+cstring
+-
+iostream
+-
+string
+-
+sys/socket.h
+-
+sys/types.h
+-
+unistd.h
+-
+

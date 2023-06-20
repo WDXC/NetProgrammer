@@ -1,0 +1,22 @@
+[
+{
+  "directory": "/root/mine/project/NetProgrammer/build",
+  "command": "/usr/bin/c++   -I/root/mine/project/NetProgrammer/include/echo_server -I/root/mine/project/NetProgrammer/include/test_client -I/root/mine/project/NetProgrammer/include/Log   -O0 -Wall -g -ggdb -Wunused   -o CMakeFiles/test_client_main.dir/example/test_client_main.cpp.o -c /root/mine/project/NetProgrammer/example/test_client_main.cpp",
+  "file": "/root/mine/project/NetProgrammer/example/test_client_main.cpp"
+},
+{
+  "directory": "/root/mine/project/NetProgrammer/build",
+  "command": "/usr/bin/c++   -I/root/mine/project/NetProgrammer/include/echo_server -I/root/mine/project/NetProgrammer/include/test_client -I/root/mine/project/NetProgrammer/include/Log   -O0 -Wall -g -ggdb -Wunused   -o CMakeFiles/test_client.dir/src/test_client/test_client.cpp.o -c /root/mine/project/NetProgrammer/src/test_client/test_client.cpp",
+  "file": "/root/mine/project/NetProgrammer/src/test_client/test_client.cpp"
+},
+{
+  "directory": "/root/mine/project/NetProgrammer/build",
+  "command": "/usr/bin/c++   -I/root/mine/project/NetProgrammer/include/echo_server -I/root/mine/project/NetProgrammer/include/test_client -I/root/mine/project/NetProgrammer/include/Log   -O0 -Wall -g -ggdb -Wunused   -o CMakeFiles/echo_server_main.dir/example/echo_server_main.cpp.o -c /root/mine/project/NetProgrammer/example/echo_server_main.cpp",
+  "file": "/root/mine/project/NetProgrammer/example/echo_server_main.cpp"
+},
+{
+  "directory": "/root/mine/project/NetProgrammer/build",
+  "command": "/usr/bin/c++  -Decho_server_EXPORTS -I/root/mine/project/NetProgrammer/include/echo_server -I/root/mine/project/NetProgrammer/include/test_client -I/root/mine/project/NetProgrammer/include/Log   -O0 -Wall -g -ggdb -Wunused -fPIC   -o CMakeFiles/echo_server.dir/src/echo_server/EchoServer.cpp.o -c /root/mine/project/NetProgrammer/src/echo_server/EchoServer.cpp",
+  "file": "/root/mine/project/NetProgrammer/src/echo_server/EchoServer.cpp"
+}
+]

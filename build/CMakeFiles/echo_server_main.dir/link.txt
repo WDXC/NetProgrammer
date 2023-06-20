@@ -1,0 +1,1 @@
+/usr/bin/c++   -O0 -Wall -g -ggdb -Wunused   CMakeFiles/echo_server_main.dir/example/echo_server_main.cpp.o  -o bin/echo_server_main   -L/root/mine/project/NetProgrammer/lib  -L/root/mine/project/NetProgrammer/build/lib  -Wl,-rpath,/root/mine/project/NetProgrammer/lib:/root/mine/project/NetProgrammer/build/lib lib/libecho_server.so -levent -lpthread -levent_core 

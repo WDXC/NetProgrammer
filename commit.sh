@@ -22,6 +22,7 @@ fi
 cd build
 make clean
 make -j $(nproc || sysctl -n hw.ncpu || echo 2)
+cp ./bin/*_main ../
     " > run.sh
     chmod +x run.sh
     echo -e "Compile shell script generated at: $PWD/run.sh\n"
@@ -30,16 +31,6 @@ make -j $(nproc || sysctl -n hw.ncpu || echo 2)
 commit_local_code()
 {
     read -p "Please input commit context: " context 
-
-    if [ -f "$file" ];then
-        rm -rf $file
-    fi
-    if [ -d "$dir" ];then
-        rm -rf $dir
-    fi
-    if [ -d "$cache" ];then
-        rm -rf $cache
-    fi
 
     git add .
     git commit -m "${context}"

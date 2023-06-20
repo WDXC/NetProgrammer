@@ -1,0 +1,2 @@
+/usr/bin/ar qc libtest_client.a  CMakeFiles/test_client.dir/src/test_client/test_client.cpp.o
+/usr/bin/ranlib libtest_client.a

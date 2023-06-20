@@ -1,6 +1,0 @@
-/root/mine/project/NetProgrammer/build/CMakeFiles/rebuild_cache.dir
-/root/mine/project/NetProgrammer/build/CMakeFiles/edit_cache.dir
-/root/mine/project/NetProgrammer/build/CMakeFiles/test_client_main.dir
-/root/mine/project/NetProgrammer/build/CMakeFiles/test_client.dir
-/root/mine/project/NetProgrammer/build/CMakeFiles/echo_server_main.dir
-/root/mine/project/NetProgrammer/build/CMakeFiles/echo_server.dir

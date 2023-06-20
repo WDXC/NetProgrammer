@@ -1,1 +1,0 @@
-/usr/bin/c++   -O0 -Wall -g -ggdb -Wunused   CMakeFiles/test_client_main.dir/example/test_client_main.cpp.o  -o bin/test_client_main   -L/root/mine/project/NetProgrammer/lib  -L/root/mine/project/NetProgrammer/build/lib  -Wl,-rpath,/root/mine/project/NetProgrammer/lib:/root/mine/project/NetProgrammer/build/lib libtest_client.a -levent -lpthread -levent_core 

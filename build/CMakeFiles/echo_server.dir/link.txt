@@ -1,1 +1,0 @@
-/usr/bin/c++ -fPIC  -O0 -Wall -g -ggdb -Wunused  -shared -Wl,-soname,libecho_server.so -o lib/libecho_server.so CMakeFiles/echo_server.dir/src/echo_server/EchoServer.cpp.o   -L/root/mine/project/NetProgrammer/lib  -L/root/mine/project/NetProgrammer/build/lib 

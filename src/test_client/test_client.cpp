@@ -38,6 +38,9 @@ void Client::read_cb(struct bufferevent *bev, void *ctx) {
   char *data = new char[len + 1];
   evbuffer_copyout(input, data, len);
   data[len] = '\0';
+
+  evbuffer_drain(input, len);
+  
   std::cout << "Received: " << data << std::endl;
   delete[] data;
 }
@@ -51,7 +54,6 @@ void Client::event_cb(struct bufferevent *bev, short events, void *ctx) {
     }
     std::cout << "Connection closed." << std::endl;
     bufferevent_free(bev);
-    event_base_loopbreak(static_cast<event_base *>(ctx)); // 停止事件循环
   }
 }
 
@@ -85,6 +87,8 @@ void Client::init() {
   struct event *stdin_event =
       event_new(base, fileno(stdin), EV_READ | EV_PERSIST, stdin_read_cb, bev);
   event_add(stdin_event, nullptr);
+
+  bufferevent_enable(bev, EV_READ);
 
   event_base_dispatch(base);
 

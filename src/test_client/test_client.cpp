@@ -16,13 +16,19 @@ Client::~Client() {}
 
 void Client::stdin_read_cb(evutil_socket_t fd, short event, void *arg) {
   char message[1024];
+  struct bufferevent *bev = static_cast<struct bufferevent *>(arg);
+  struct evbuffer *output = bufferevent_get_output(bev);
+
+  if (bufferevent_getfd(bev) == -1) {
+    // 如果尚未连接到服务器，则不发送数据
+    return;
+  }
+
   if (fgets(message, sizeof(message), stdin) != nullptr) {
-    struct bufferevent *bev = static_cast<struct bufferevent *>(arg);
-    struct evbuffer *output = bufferevent_get_output(bev);
     evbuffer_add(output, message, strlen(message));
+    bufferevent_flush(bev, EV_WRITE, BEV_FLUSH);
   } else {
-    event_base_loopbreak(event_get_base(static_cast<struct event *>(
-        arg))); // Exit event loop when there is no input
+    event_base_loopbreak(event_get_base(static_cast<struct event *>(arg)));
   }
 }
 

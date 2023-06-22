@@ -15,6 +15,7 @@ public:
   struct client;
 
   static int setnonblock(int fd);
+  static void conn_writecb(struct bufferevent *, void *);
   static void on_read_cb(struct bufferevent *bev, void *ctx);
   static void echo_event_cb(struct bufferevent *bev, short events, void *ctx);
   static void accept_error_cb(struct evconnlistener *listener, void *ctx);

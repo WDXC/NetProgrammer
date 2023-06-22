@@ -34,8 +34,10 @@ void EchoServer::on_read_cb(struct bufferevent *bev, void *ctx) {
 
   // 从输入缓冲区读取数据
   size_t len = evbuffer_get_length(input);
-  char *data = (char*)malloc(len);
+  char *data = (char *)malloc(len);
   evbuffer_copyout(input, data, len);
+
+  printf("The message from client is : %s", data);
 
   // 将数据写入输出缓冲区
   evbuffer_add_buffer(output, input);
@@ -69,43 +71,43 @@ void EchoServer::on_accpet_cb(struct evconnlistener *listener,
 }
 
 void EchoServer::accept_error_cb(struct evconnlistener *listener, void *ctx) {
-        struct event_base *base = evconnlistener_get_base(listener);
-    int err = EVUTIL_SOCKET_ERROR();
-    fprintf(stderr, "Error %d: %s\n", err, evutil_socket_error_to_string(err));
+  struct event_base *base = evconnlistener_get_base(listener);
+  int err = EVUTIL_SOCKET_ERROR();
+  fprintf(stderr, "Error %d: %s\n", err, evutil_socket_error_to_string(err));
 
-    event_base_loopexit(base, NULL);
+  event_base_loopexit(base, NULL);
 }
 
 void EchoServer::init() {
-    struct event_base *base;
-    struct evconnlistener *listener;
-    struct sockaddr_in sin;
-    
-    int port = 8888;
-    
-    base = event_base_new();
-    if (!base) {
-        fprintf(stderr, "Could not initialize event base.\n");
-        return;
-    }
-    
-    memset(&sin, 0, sizeof(sin));
-    sin.sin_family = AF_INET;
-    sin.sin_addr.s_addr = htonl(INADDR_ANY);
-    sin.sin_port = htons(port);
-    
-    listener = evconnlistener_new_bind(base, on_accpet_cb, NULL,
-                                       LEV_OPT_CLOSE_ON_FREE | LEV_OPT_REUSEABLE,
-                                       -1, (struct sockaddr*)&sin, sizeof(sin));
-    if (!listener) {
-        fprintf(stderr, "Could not create listener.\n");
-        return;
-    }
-    
-    evconnlistener_set_error_cb(listener, accept_error_cb);
-    
-    event_base_dispatch(base);
-    
-    evconnlistener_free(listener);
-    event_base_free(base);
+  struct event_base *base;
+  struct evconnlistener *listener;
+  struct sockaddr_in sin;
+
+  int port = 8888;
+
+  base = event_base_new();
+  if (!base) {
+    fprintf(stderr, "Could not initialize event base.\n");
+    return;
+  }
+
+  memset(&sin, 0, sizeof(sin));
+  sin.sin_family = AF_INET;
+  sin.sin_addr.s_addr = htonl(INADDR_ANY);
+  sin.sin_port = htons(port);
+
+  listener = evconnlistener_new_bind(base, on_accpet_cb, NULL,
+                                     LEV_OPT_CLOSE_ON_FREE | LEV_OPT_REUSEABLE,
+                                     -1, (struct sockaddr *)&sin, sizeof(sin));
+  if (!listener) {
+    fprintf(stderr, "Could not create listener.\n");
+    return;
+  }
+
+  evconnlistener_set_error_cb(listener, accept_error_cb);
+
+  event_base_dispatch(base);
+
+  evconnlistener_free(listener);
+  event_base_free(base);
 }

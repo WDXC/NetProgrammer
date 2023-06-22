@@ -3,9 +3,12 @@
 dir="./build"
 file="./run.sh"
 cache="./.cache"
+client="test_client_main"
+server="echo_server_main"
 
 echo -e "1. Generate compile script\n"
 echo -e "2. Commit your local commit\n"
+echo -e "3. clear local development envrioment\n"
 echo -e "q. Quit(q)\n"
 
 generate_compile_script()
@@ -37,6 +40,26 @@ commit_local_code()
     git push origin main
 }
 
+clear_development_envrionment()
+{
+    if [ -d ${dir} ];then
+        rm -rf ${dir}
+    fi
+    if [ -d ${cache} ];then
+        rm -rf ${cache}
+    fi
+    if [ -f ${client} ];then
+        rm ${client}
+    fi
+    if [ -f ${server} ];then
+        rm ${server}
+    fi
+    if [ -f ${file} ];then
+        rm ${file}
+    fi
+    echo -e "clean successfully\n"
+}
+
 
 while true; do
     read -p "Enter your choice: " choice
@@ -47,6 +70,10 @@ while true; do
             ;;
         "2")
             commit_local_code
+            break
+            ;;
+        "3")
+            clear_development_envrionment
             break
             ;;
         "q")

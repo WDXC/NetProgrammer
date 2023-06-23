@@ -20,7 +20,7 @@ public:
   static void event_cb(struct bufferevent *bev, short events, void *ctx);
   static void stdin_read_cb(evutil_socket_t fd, short event, void *arg);
 
-  void init();
+  void init(const char* ip, const char* port);
 };
 
 } // namespace test_client

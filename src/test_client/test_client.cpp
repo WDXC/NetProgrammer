@@ -40,7 +40,7 @@ void Client::read_cb(struct bufferevent *bev, void *ctx) {
   data[len] = '\0';
 
   evbuffer_drain(input, len);
-  
+
   std::cout << "Received: " << data << std::endl;
   delete[] data;
 }
@@ -54,10 +54,11 @@ void Client::event_cb(struct bufferevent *bev, short events, void *ctx) {
     }
     std::cout << "Connection closed." << std::endl;
     bufferevent_free(bev);
+    exit(1);
   }
 }
 
-void Client::init() {
+void Client::init(const char *Ip, const char *port) {
   struct event_base *base = event_base_new();
   if (!base) {
     std::cerr << "Could not initialize event base." << std::endl;
@@ -69,19 +70,18 @@ void Client::init() {
   bufferevent_setcb(bev, read_cb, nullptr, event_cb,
                     base); // 设置读取回调函数和事件回调函数
 
-  const char *server_ip = "127.0.0.1";
-  int server_port = 8888;
   struct sockaddr_in sin;
   memset(&sin, 0, sizeof(sin));
   sin.sin_family = AF_INET;
-  sin.sin_addr.s_addr = inet_addr(server_ip);
-  sin.sin_port = htons(server_port);
+  sin.sin_addr.s_addr = inet_addr(Ip);
+  sin.sin_port = htons(atoi(port));
 
   if (bufferevent_socket_connect(bev, reinterpret_cast<struct sockaddr *>(&sin),
                                  sizeof(sin)) < 0) {
-    perror("Error connecting to server");
+    printf("My errno is %d", errno);
+    perror("Error connecting to server ");
     bufferevent_free(bev);
-    return;
+    exit(1);
   }
 
   struct event *stdin_event =

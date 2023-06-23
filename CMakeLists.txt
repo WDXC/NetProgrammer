@@ -18,27 +18,26 @@ LINK_DIRECTORIES(${CMAKE_SOURCE_DIR}/lib)
 LINK_DIRECTORIES(${CMAKE_SOURCE_DIR}/build/lib)
 
 # find source cpp files
-file(GLOB_RECURSE source_list_echo_server "src/echo_server/*.cpp")
-file(GLOB_RECURSE source_list_test_client "src/test_client/*.cpp")
+file(GLOB_RECURSE source_list_echo_server "src/Echo_Server/EchoServer.cpp")
+file(GLOB_RECURSE source_list_test_client "src/Echo_Server/test_client.cpp")
 
 # find include files
 include_directories(
-    include/echo_server
-    include/test_client
+    include/Echo_Server
     include/Log
 )
 
 # generate executable files
 # echo_server
 add_library(${ECHO} SHARED ${source_list_echo_server})
-add_executable(${ECHO}_main ${CMAKE_CURRENT_SOURCE_DIR}/example/echo_server_main.cpp)
+add_executable(${ECHO}_main ${CMAKE_CURRENT_SOURCE_DIR}/example/Echo_Server/echo_server_main.cpp)
 target_link_libraries(${ECHO}_main PRIVATE ${ECHO} -levent -lpthread 
     -levent_core)
 
 # test_client
 add_library(${CLIENT} ${source_list_test_client})
 add_executable(${CLIENT}_main ${source_list}
-    ${CMAKE_CURRENT_SOURCE_DIR}/example/test_client_main.cpp)
+    ${CMAKE_CURRENT_SOURCE_DIR}/example/Echo_Server/test_client_main.cpp)
 target_link_libraries(${CLIENT}_main PRIVATE ${CLIENT} -levent -lpthread  -levent_core)
 
 

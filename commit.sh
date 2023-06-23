@@ -25,7 +25,6 @@ fi
 cd build
 make clean
 make -j $(nproc || sysctl -n hw.ncpu || echo 2)
-cp ./bin/*_main ../
     " > run.sh
     chmod +x run.sh
     echo -e "Compile shell script generated at: $PWD/run.sh\n"

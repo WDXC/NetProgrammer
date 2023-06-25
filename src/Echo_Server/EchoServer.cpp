@@ -8,25 +8,11 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-int EchoServer::SERVER_PORT = 5555;
-
 EchoServer::EchoServer() {}
 
 EchoServer::~EchoServer() {}
 
-int EchoServer::setnonblock(int fd) {
-  int flags;
 
-  flags = fcntl(fd, F_GETFL);
-  if (flags < 0) {
-    return flags;
-  }
-  flags |= O_NONBLOCK;
-  if (fcntl(fd, F_SETFL, flags) < 0) {
-    return -1;
-  }
-  return 0;
-}
 
 void EchoServer::on_read_cb(struct bufferevent *bev, void *ctx) {
   struct evbuffer *input = bufferevent_get_input(bev);

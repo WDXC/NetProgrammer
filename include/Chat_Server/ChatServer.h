@@ -1,16 +1,17 @@
-#ifndef _ECHO_SERVER_H_
-#define _ECHO_SERVER_H_
+#ifndef _CHAT_SERVER_H_
+#define _CHAT_SERVER_H_
 
-#include <event2/bufferevent.h>
-#include <event2/bufferevent.h>
 #include <event2/buffer.h>
+#include <event2/bufferevent.h>
+#include <event2/event.h>
 #include <event2/listener.h>
 
+namespace Chat {
 
-class EchoServer {
+class ChatServer {
 public:
-  EchoServer();
-  ~EchoServer();
+  ChatServer();
+  ~ChatServer();
 
   void init();
 
@@ -21,5 +22,7 @@ public:
   static void on_accpet_cb(struct evconnlistener *listener, evutil_socket_t fd,
                             struct sockaddr *address, int socklen, void *ctx);
 };
+
+} // namespace Chat
 
 #endif

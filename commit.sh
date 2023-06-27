@@ -1,10 +1,11 @@
 #!/bin/bash
 
+shopt -s nullglob
+
 dir="./build"
 file="./run.sh"
 cache="./.cache"
-client="test_client_main"
-server="echo_server_main"
+
 
 echo -e "1. Generate compile script\n"
 echo -e "2. Commit your local commit\n"
@@ -13,25 +14,30 @@ echo -e "q. Quit(q)\n"
 
 generate_compile_script()
 {
+    echo -e "\n"
     if [ -f "run.sh" ]; then
         echo -e "Compile shell script has been generated at: $PWD/run.sh\n"
         exit
     fi
-    echo "
+    cat << EOF > run.sh
 #!/bin/bash
 if [ ! -d "$dir" ];then
     cmake -B build .
 fi
 cd build
 make clean
-make -j $(nproc || sysctl -n hw.ncpu || echo 2)
-    " > run.sh
+make -j \$(nproc || sysctl -n hw.ncpu || echo 2)
+echo
+
+echo "executable file at: \${PWD}/bin"
+EOF
     chmod +x run.sh
-    echo -e "Compile shell script generated at: $PWD/run.sh\n"
+    echo -e "\nCompile shell script generated at: $PWD/run.sh\n"
 }
 
 commit_local_code()
 {
+    echo  -e "\n"
     read -p "Please input commit context: " context 
 
     git add .
@@ -41,20 +47,18 @@ commit_local_code()
 
 clear_development_envrionment()
 {
+    echo -e "\n"
     if [ -d ${dir} ];then
         rm -rf ${dir}
     fi
     if [ -d ${cache} ];then
         rm -rf ${cache}
     fi
-    if [ -f ${client} ];then
-        rm ${client}
-    fi
-    if [ -f ${server} ];then
-        rm ${server}
-    fi
     if [ -f ${file} ];then
         rm ${file}
+    fi
+    if bin_file=(*_main); [ ${#bin_file[@]} -gt 0 ]; then
+        rm "${bin_file[@]}"
     fi
     echo -e "clean successfully\n"
 }
